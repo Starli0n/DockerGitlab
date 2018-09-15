@@ -75,3 +75,21 @@ In production, the reverse proxy should be started as well.
 
 - Update gitlab docker image by changing the tag in `.env`
 - Run `./update.sh` after an update of the gitlab configuration file `./gitlab/config/gitlab.rb`
+
+## Restore a backup
+
+```
+./gitlab/data/backups/${D_GITLAB_BACKUP}_gitlab_backup.tar
+docker exec -it gitlab chown -R git /var/opt/gitlab/backups
+docker exec -it gitlab chmod -R 775 /var/opt/gitlab/backups
+docker exec -it gitlab gitlab-ctl reconfigure
+docker exec -it gitlab gitlab-ctl stop unicorn
+docker exec -it gitlab gitlab-ctl stop sidekiq
+docker exec -it gitlab gitlab-ctl status || true
+docker exec -it gitlab gitlab-rake gitlab:backup:restore BACKUP=${D_GITLAB_BACKUP} --trace
+docker exec -it gitlab chown -R git /var/opt/gitlab/gitlab-rails/uploads
+docker exec -it gitlab gitlab-ctl reconfigure
+docker exec -it gitlab gitlab-ctl restart
+docker exec -it gitlab gitlab-rake gitlab:check SANITIZE=true
+docker exec -it gitlab gitlab-rake cache:clear
+```
