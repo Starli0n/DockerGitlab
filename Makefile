@@ -9,6 +9,8 @@ env_var: # Print environnement variables
 init: # Initialize
 	chmod +x update.sh
 	chmod +x container-status.sh
+	mkdir .ssh
+	ssh-keygen -t rsa -b 4096 -C "gitlab@no-reply.com" -f "$PWD/.ssh/id_gitlab_rsa"
 
 .PHONY: pull
 pull: # Pull the docker image
@@ -40,9 +42,10 @@ restart: # Restart container
 
 .PHONY: update
 update: # Update docker image and restart the container
+	make pull
+	make backup-create
 	make stop
 	docker rm ${GITLAB_CONTAINER}
-	make pull
 	make up
 
 .PHONY: logs
@@ -103,3 +106,14 @@ backup-restore: # ./gitlab/data/backups/${GITLAB_BACKUP}_gitlab_backup.tar
 	docker exec -it ${GITLAB_CONTAINER} gitlab-ctl restart
 	docker exec -it ${GITLAB_CONTAINER} gitlab-rake gitlab:check SANITIZE=true
 	docker exec -it ${GITLAB_CONTAINER} gitlab-rake cache:clear
+
+.PHONY: backup-rsync
+backup-rsync:
+	rsync -a -e "ssh -i .ssh/id_gitlab_rsa" gitlab/data/backups/ ${BACKUP_SRV_USR}@${BACKUP_SRV_HOST}:${BACKUP_SRV_PATH}
+
+.PHONY: backup-create-rsync
+backup-create-rsync: backup-create backup-rsync
+
+.PHONY: backup-srv-shell
+backup-srv-shell:
+	ssh ${BACKUP_SRV_USR}@${BACKUP_SRV_HOST} -i ".ssh/id_gitlab_rsa"

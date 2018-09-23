@@ -3,3 +3,5 @@ gitlab/*
 !gitlab/config
 gitlab/config/*
 !gitlab/config/gitlab.rb
+*.log
+.ssh

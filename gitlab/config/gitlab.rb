@@ -282,12 +282,12 @@ nginx['proxy_set_headers'] = {
 # gitlab_rails['backup_path'] = "/var/opt/gitlab/backups"
 
 ###! Docs: https://docs.gitlab.com/ce/raketasks/backup_restore.html#backup-archive-permissions
-# gitlab_rails['backup_archive_permissions'] = 0644
+gitlab_rails['backup_archive_permissions'] = 0644
 
 # gitlab_rails['backup_pg_schema'] = 'public'
 
 ###! The duration in seconds to keep backups before they are allowed to be deleted
-# gitlab_rails['backup_keep_time'] = 604800
+gitlab_rails['backup_keep_time'] = 604800
 
 # gitlab_rails['backup_upload_connection'] = {
 #   'provider' => 'AWS',
