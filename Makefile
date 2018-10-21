@@ -7,8 +7,10 @@ env_var: # Print environnement variables
 
 .PHONY: init
 init: # Initialize
+	cp .env.default .env
 	chmod +x update.sh
 	chmod +x container-status.sh
+	mkdir -p gitlab/{config,logs,data}
 	mkdir .ssh
 	ssh-keygen -t rsa -b 4096 -C "gitlab@no-reply.com" -f "$PWD/.ssh/id_gitlab_rsa"
 
@@ -18,27 +20,27 @@ pull: # Pull the docker image
 
 .PHONY: config
 config: # Show docker-compose configuration
-	docker-compose -f docker-compose.yml -f production.yml config
+	docker-compose -f docker-compose.yml config
 
 .PHONY: up
 up: # Start containers and services
-	docker-compose -f docker-compose.yml -f production.yml up -d
+	docker-compose -f docker-compose.yml up -d
 
 .PHONY: down
 down: # Stop containers and services
-	docker-compose -f docker-compose.yml -f production.yml down
+	docker-compose -f docker-compose.yml down
 
 .PHONY: start
 start: # Start containers
-	docker-compose -f docker-compose.yml -f production.yml start
+	docker-compose -f docker-compose.yml start
 
 .PHONY: stop
 stop: # Stop containers
-	docker-compose -f docker-compose.yml -f production.yml stop
+	docker-compose -f docker-compose.yml stop
 
 .PHONY: restart
 restart: # Restart container
-	docker-compose -f docker-compose.yml -f production.yml restart
+	docker-compose -f docker-compose.yml restart
 
 .PHONY: update
 update: # Update docker image and restart the container
@@ -66,13 +68,17 @@ shell: # Open a shell on a started container
 
 .PHONY: status
 status: # Check the status of the container (from starting to healthy)
-	@./container-status.sh gitlab
+	@./container-status.sh ${GITLAB_CONTAINER}
 
 .PHONY: curl
 curl: # Test that the container is up with curl
 	docker exec -it ${GITLAB_CONTAINER} curl 127.0.0.1; echo -e "\n"
 	docker exec -it ${GITLAB_CONTAINER} curl 127.0.0.1:8080; echo -e "\n"
 	docker exec -it ${GITLAB_CONTAINER} curl 127.0.0.1:443 -k; echo -e "\n"
+
+.PHONY: url
+url:
+	@echo https://gitlab.${NGINX_HOSTNAME}
 
 .PHONY: perm
 perm:

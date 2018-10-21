@@ -5,8 +5,19 @@ services:
   gitlab:
     container_name: ${GITLAB_CONTAINER}
     image: gitlab/gitlab-ce:${TAG}
-    hostname: ${HOSTNAME}
+    hostname: ${NGINX_HOSTNAME}
+    environment:
+      - VIRTUAL_HOST=gitlab.${NGINX_HOSTNAME}
+      - LETSENCRYPT_HOST=gitlab.${NGINX_HOSTNAME}
+      - LETSENCRYPT_EMAIL=gitlab@no-reply.com
     volumes:
       - ./gitlab/config:/etc/gitlab
       - ./gitlab/logs:/var/log/gitlab
       - ./gitlab/data:/var/opt/gitlab
+    restart: always
+
+networks:
+  default:
+    external:
+      name: ${NGINX_PROXY_NET}
+

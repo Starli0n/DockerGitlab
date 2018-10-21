@@ -11,12 +11,9 @@
 ##! For more details on configuring external_url see:
 ##! https://docs.gitlab.com/omnibus/settings/configuration.html#configuring-the-external-url-for-gitlab
 # external_url 'GENERATED_EXTERNAL_URL'
-external_url "https://gitlab.example.com:443/gitlab"
-
-gitlab_rails['trusted_proxies'] = ['172.18.0.10']
+external_url "https://gitlab.example.com"
 
 # Each address is added to the the NGINX config as 'set_real_ip_from <address>;'
-nginx['real_ip_trusted_addresses'] = [ '172.18.0.0/24', '172.18.0.10' ]
 # other real_ip config options
 nginx['real_ip_header'] = 'X-Real-IP'
 nginx['real_ip_recursive'] = 'on'
