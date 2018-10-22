@@ -7,9 +7,9 @@ services:
     image: gitlab/gitlab-ce:${TAG}
     hostname: ${NGINX_HOSTNAME}
     environment:
-      - VIRTUAL_HOST=gitlab.${NGINX_HOSTNAME}
-      - LETSENCRYPT_HOST=gitlab.${NGINX_HOSTNAME}
-      - LETSENCRYPT_EMAIL=gitlab@no-reply.com
+      - VIRTUAL_HOST=${GITLAB_HOSTNAME}
+      - LETSENCRYPT_HOST=${GITLAB_HOSTNAME}
+      - LETSENCRYPT_EMAIL=${GITLAB_CONTAINER}@no-reply.com
     volumes:
       - ./gitlab/config:/etc/gitlab
       - ./gitlab/logs:/var/log/gitlab
@@ -20,4 +20,3 @@ networks:
   default:
     external:
       name: ${NGINX_PROXY_NET}
-

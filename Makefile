@@ -1,18 +1,31 @@
 -include .env
 export $(shell sed 's/=.*//' .env)
 
+export GITLAB_HOSTNAME=${GITLAB_CONTAINER}.${NGINX_HOSTNAME}
+
 .PHONY: env_var
 env_var: # Print environnement variables
 	@cat .env
+	@echo
+	@echo GITLAB_HOSTNAME=${GITLAB_HOSTNAME}
 
-.PHONY: init
-init: # Initialize
-	cp .env.default .env
+.PHONY: initialize
+initialize: init
+	cp -n .env.default .env
 	chmod +x update.sh
 	chmod +x container-status.sh
+	mkdir -p .ssh
+	ssh-keygen -t rsa -b 4096 -C "${GITLAB_CONTAINER}@no-reply.com" -f "$$PWD/.ssh/id_${GITLAB_CONTAINER}_rsa"
+
+.PHONY: init
+init:
 	mkdir -p gitlab/{config,logs,data}
-	mkdir .ssh
-	ssh-keygen -t rsa -b 4096 -C "gitlab@no-reply.com" -f "$PWD/.ssh/id_gitlab_rsa"
+	cp gitlab.rb gitlab/config/gitlab.rb
+	sed -i "s/gitlab.example.com/${GITLAB_HOSTNAME}/g" gitlab/config/gitlab.rb
+
+.PHONY: erase
+erase:
+	rm -rf gitlab
 
 .PHONY: pull
 pull: # Pull the docker image
@@ -41,6 +54,15 @@ stop: # Stop containers
 .PHONY: restart
 restart: # Restart container
 	docker-compose -f docker-compose.yml restart
+
+.PHONY: delete
+delete: down erase
+
+.PHONY: mount
+mount: init up status
+
+.PHONY: reset
+reset: delete mount
 
 .PHONY: update
 update: # Update docker image and restart the container
@@ -78,7 +100,7 @@ curl: # Test that the container is up with curl
 
 .PHONY: url
 url:
-	@echo https://gitlab.${NGINX_HOSTNAME}
+	@echo https://${GITLAB_HOSTNAME}
 
 .PHONY: perm
 perm:
