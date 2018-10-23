@@ -64,7 +64,7 @@ restart: # Restart container
 delete: down erase
 
 .PHONY: mount
-mount: init up perm ctl-reconfigure
+mount: init up perm
 
 .PHONY: reset
 reset: delete mount
