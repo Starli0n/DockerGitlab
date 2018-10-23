@@ -2,12 +2,18 @@
 export $(shell sed 's/=.*//' .env)
 
 export GITLAB_HOSTNAME=${GITLAB_CONTAINER}.${NGINX_HOSTNAME}
+export GITLAB_HTTP_URL=http://${GITLAB_HOSTNAME}:${NGINX_PROXY_HTTP}
+export GITLAB_HTTPS_URL=https://${GITLAB_HOSTNAME}:${NGINX_PROXY_HTTPS}
+export GITLAB_EXTERNAL_URL=${GITLAB_HTTPS_URL}
 
 .PHONY: env_var
 env_var: # Print environnement variables
 	@cat .env
 	@echo
 	@echo GITLAB_HOSTNAME=${GITLAB_HOSTNAME}
+	@echo GITLAB_HTTP_URL=${GITLAB_HTTP_URL}
+	@echo GITLAB_HTTPS_URL=${GITLAB_HTTPS_URL}
+	@echo GITLAB_EXTERNAL_URL=${GITLAB_EXTERNAL_URL}
 
 .PHONY: initialize
 initialize: init
@@ -20,8 +26,7 @@ initialize: init
 .PHONY: init
 init:
 	mkdir -p gitlab/{config,logs,data}
-	cp gitlab.rb gitlab/config/gitlab.rb
-	sed -i "s/gitlab.example.com/${GITLAB_HOSTNAME}/g" gitlab/config/gitlab.rb
+	chmod -R 777 gitlab/{config,logs,data}
 
 .PHONY: erase
 erase:
@@ -59,7 +64,7 @@ restart: # Restart container
 delete: down erase
 
 .PHONY: mount
-mount: init up status
+mount: init up perm ctl-reconfigure
 
 .PHONY: reset
 reset: delete mount
@@ -100,7 +105,7 @@ curl: # Test that the container is up with curl
 
 .PHONY: url
 url:
-	@echo https://${GITLAB_HOSTNAME}
+	@echo ${GITLAB_EXTERNAL_URL}
 
 .PHONY: perm
 perm:

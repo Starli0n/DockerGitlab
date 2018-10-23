@@ -7,9 +7,15 @@ services:
     image: gitlab/gitlab-ce:${TAG}
     hostname: ${NGINX_HOSTNAME}
     environment:
-      - VIRTUAL_HOST=${GITLAB_HOSTNAME}
-      - LETSENCRYPT_HOST=${GITLAB_HOSTNAME}
-      - LETSENCRYPT_EMAIL=${GITLAB_CONTAINER}@no-reply.com
+      VIRTUAL_HOST: ${GITLAB_HOSTNAME}
+      LETSENCRYPT_HOST: ${GITLAB_HOSTNAME}
+      LETSENCRYPT_EMAIL: ${GITLAB_CONTAINER}@no-reply.com
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url '${GITLAB_EXTERNAL_URL}'
+        nginx['real_ip_header'] = 'X-Real-IP'
+        nginx['real_ip_recursive'] = 'on'
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
     volumes:
       - ./gitlab/config:/etc/gitlab
       - ./gitlab/logs:/var/log/gitlab

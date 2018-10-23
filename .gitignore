@@ -1,7 +1,4 @@
 .env
-gitlab/*
-!gitlab/config
-gitlab/config/*
-!gitlab/config/gitlab.rb
+gitlab
 *.log
 .ssh
