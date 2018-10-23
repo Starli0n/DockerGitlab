@@ -122,7 +122,7 @@ ctl-restart:
 .PHONY: backup-create
 backup-create:
 	echo -e "Begin at `date`\n">backup.log
-	docker exec -t gitlab gitlab-rake gitlab:backup:create>>backup.log 2>&1
+	docker exec -t ${GITLAB_CONTAINER} gitlab-rake gitlab:backup:create>>backup.log 2>&1
 	echo -e "\nEnd at `date`">>backup.log
 
 .PHONY: backup-restore
