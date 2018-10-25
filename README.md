@@ -1,12 +1,12 @@
-# DockerGitlab
+# nginx-gitlab
 
 ## Install
 
 Prerequisite: Install the [reverse proxy](https://github.com/Starli0n/nginx-proxy)
 
 ```sh
-> git clone https://github.com/Starli0n/nginx-proxy-gitlab nginx-proxy-gitlab
-> cd nginx-proxy-gitlab
+> git clone https://github.com/Starli0n/nginx-gitlab
+> cd nginx-gitlab
 > make init
 ```
 
@@ -52,7 +52,7 @@ In production, the reverse proxy should be started as well.
 
 - Explore the `gitlab` container
 ```
-# docker exec -it nginx-proxy-gitlab /bin/bash
+# docker exec -it nginx-gitlab /bin/bash
 make shell
 ```
 

@@ -155,4 +155,5 @@ backup-create-rsync: backup-create backup-rsync
 
 .PHONY: backup-srv-shell
 backup-srv-shell:
-	ssh ${BACKUP_SRV_USR}@${BACKUP_SRV_HOST} -i ".ssh/id_gitlab_rsa"
+	@echo ${BACKUP_SRV_USR}@${BACKUP_SRV_HOST}:${BACKUP_SRV_PATH}
+	ssh ${BACKUP_SRV_USR}@${BACKUP_SRV_HOST} -i ".ssh/id_gitlab_rsa" -t "cd ${BACKUP_SRV_PATH}; bash --login"
