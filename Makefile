@@ -15,9 +15,12 @@ env_var: # Print environnement variables
 	@echo GITLAB_HTTPS_URL=${GITLAB_HTTPS_URL}
 	@echo GITLAB_EXTERNAL_URL=${GITLAB_EXTERNAL_URL}
 
+.PHONY: env
+env: # Create .env and tweak it before initialize
+	cp .env.default .env
+
 .PHONY: initialize
 initialize: init
-	cp -n .env.default .env
 	chmod +x update.sh
 	chmod +x container-status.sh
 	mkdir -p .ssh
@@ -67,7 +70,10 @@ delete: down erase
 mount: init up perm
 
 .PHONY: reset
-reset: delete mount
+reset: down up
+
+.PHONY: hard-reset
+hard-reset: delete mount
 
 .PHONY: update
 update: # Update docker image and restart the container
