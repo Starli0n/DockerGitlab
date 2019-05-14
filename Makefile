@@ -150,8 +150,12 @@ backup-restore: # ./gitlab/data/backups/${GITLAB_BACKUP}_gitlab_backup.tar
 backup-rsync:
 	rsync -a -e "ssh -i .ssh/id_gitlab_rsa" gitlab/data/backups/ ${BACKUP_SRV_USR}@${BACKUP_SRV_HOST}:${BACKUP_SRV_PATH}
 
+.PHONY: backup-clean
+backup-clean: # Before 3 days
+	find gitlab/data/backups -name "*.tar" -mtime +3 -delete
+
 .PHONY: backup-create-rsync
-backup-create-rsync: backup-create backup-rsync
+backup-create-rsync: backup-create backup-rsync backup-clean
 
 .PHONY: backup-srv-shell
 backup-srv-shell:

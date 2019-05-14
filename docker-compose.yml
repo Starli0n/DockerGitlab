@@ -16,6 +16,7 @@ services:
         nginx['real_ip_recursive'] = 'on'
         nginx['listen_port'] = 80
         nginx['listen_https'] = false
+        gitlab_rails['backup_keep_time'] = 259200 # 3 days
     volumes:
       - ./gitlab/config:/etc/gitlab
       - ./gitlab/logs:/var/log/gitlab
