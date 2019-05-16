@@ -91,6 +91,10 @@ logs: # Tail all logs; press Ctrl-C to exit
 logs-rails: # Drill down to a sub-directory of /var/log/gitlab
 	docker exec -it ${GITLAB_CONTAINER} gitlab-ctl tail gitlab-rails
 
+.PHONY: logs-kubernetes
+logs-kubernetes: # Drill down to an individual file
+	docker exec -it ${GITLAB_CONTAINER} gitlab-ctl tail gitlab-rails/kubernetes.log
+
 .PHONY: logs-nginx
 logs-nginx: # Drill down to an individual file
 	docker exec -it ${GITLAB_CONTAINER} gitlab-ctl tail nginx/gitlab_error.log
